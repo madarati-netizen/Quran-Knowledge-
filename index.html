@@ -9,18 +9,15 @@ body {
     background: #f2f6f4;
     padding: 20px;
 }
-
 h1 {
     text-align: center;
     color: #1b5e20;
 }
-
 .islam {
     text-align: center;
     font-size: 30px;
     margin-bottom: 15px;
 }
-
 .container {
     max-width: 800px;
     margin: auto;
@@ -28,19 +25,16 @@ h1 {
     padding: 20px;
     border-radius: 10px;
 }
-
 label {
     font-weight: bold;
     display: block;
     margin-top: 10px;
 }
-
 input, textarea, select, button {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
 }
-
 button {
     background: #1b5e20;
     color: white;
@@ -48,23 +42,33 @@ button {
     margin-top: 15px;
     cursor: pointer;
 }
-
 button:hover {
     background: #2e7d32;
 }
-
 .alarm-box {
     background: #e8f5e9;
     padding: 15px;
     margin-top: 20px;
     border-radius: 10px;
 }
-
 .teacher {
     text-align: center;
     font-size: 50px;
     color: black;
     margin-bottom: 5px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background: #e8f5e9;
 }
 </style>
 </head>
@@ -90,10 +94,10 @@ button:hover {
 </select>
 
 <label>Hifz (Neues Auswendiglernen)</label>
-<textarea id="hifz"></textarea>
+<textarea id="hifz" placeholder="z.B. 2 Seiten pro Woche"></textarea>
 
 <label>Murājaʿa (Wiederholung)</label>
-<textarea id="muraja"></textarea>
+<textarea id="muraja" placeholder="z.B. Juz 30 wiederholen"></textarea>
 
 <button onclick="speichern()">Speichern</button>
 
@@ -105,7 +109,7 @@ button:hover {
 <button onclick="alarmStart()">Alarm aktivieren</button>
 </div>
 
-<table border="1" style="width:100%; margin-top:20px;">
+<table>
 <thead>
 <tr>
 <th>Name</th><th>Monat</th><th>Hifz</th><th>Murājaʿa</th>
@@ -119,11 +123,15 @@ button:hover {
 <script>
 function speichern() {
     const daten = {
-        name: name.value,
-        monat: monat.value,
-        hifz: hifz.value,
-        muraja: muraja.value
+        name: document.getElementById("name").value,
+        monat: document.getElementById("monat").value,
+        hifz: document.getElementById("hifz").value,
+        muraja: document.getElementById("muraja").value
     };
+    if(!daten.name || !daten.hifz || !daten.muraja){
+        alert("Bitte alle Felder ausfüllen");
+        return;
+    }
     let liste = JSON.parse(localStorage.getItem("plan")) || [];
     liste.push(daten);
     localStorage.setItem("plan", JSON.stringify(liste));
@@ -131,6 +139,7 @@ function speichern() {
 }
 
 function anzeigen() {
+    const tabelle = document.getElementById("tabelle");
     tabelle.innerHTML = "";
     let liste = JSON.parse(localStorage.getItem("plan")) || [];
     liste.forEach(e => {
@@ -149,7 +158,7 @@ anzeigen();
 /* Täglicher Alarm */
 function alarmStart() {
     const zeit = document.getElementById("alarmZeit").value;
-    if (!zeit) {
+    if(!zeit){
         alert("Bitte Uhrzeit auswählen");
         return;
     }
@@ -158,7 +167,7 @@ function alarmStart() {
 
     setInterval(() => {
         const jetzt = new Date();
-        if (jetzt.getHours() == h && jetzt.getMinutes() == m && jetzt.getSeconds() == 0) {
+        if(jetzt.getHours() == h && jetzt.getMinutes() == m && jetzt.getSeconds() == 0){
             const alarm = document.getElementById("alarmTon");
             alarm.play();
             alert("⏰ Lern weiter, Löwe! 📖☪️");
