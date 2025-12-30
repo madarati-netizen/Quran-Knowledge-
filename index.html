@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Qur'an Lernplan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f6f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1b5e20;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input, select, textarea, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        button {
+            background: #1b5e20;
+            color: white;
+            border: none;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2e7d32;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #e8f5e9;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📖 Qur'an Monats-Lernplan</h1>
+
+<div class="container">
+    <label>Name des Schülers</label>
+    <input type="text" id="name">
+
+    <label>Monat</label>
+    <select id="monat">
+        <option>Januar</option>
+        <option>Februar</option>
+        <option>März</option>
+        <option>April</option>
+        <option>Mai</option>
+        <option>Juni</option>
+        <option>Juli</option>
+        <option>August</option>
+        <option>September</option>
+        <option>Oktober</option>
+        <option>November</option>
+        <option>Dezember</option>
+    </select>
+
+    <label>Neues Auswendiglernen (Hifz)</label>
+    <textarea id="hifz" placeholder="z.B. 2 Seiten pro Woche"></textarea>
+
+    <label>Murājaʿa (Wiederholung)</label>
+    <textarea id="muraja" placeholder="z.B. Juz 30 wiederholen"></textarea>
+
+    <button onclick="speichern()">Plan speichern</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Monat</th>
+                <th>Hifz</th>
+                <th>Murājaʿa</th>
+            </tr>
+        </thead>
+        <tbody id="tabelle"></tbody>
+    </table>
+</div>
+
+<script>
+    function speichern() {
+        const name = document.getElementById("name").value;
+        const monat = document.getElementById("monat").value;
+        const hifz = document.getElementById("hifz").value;
+        const muraja = document.getElementById("muraja").value;
+
+        if (!name || !hifz || !muraja) {
+            alert("Bitte alle Felder ausfüllen");
+            return;
+        }
+
+        const daten = { name, monat, hifz, muraja };
+        const liste = JSON.parse(localStorage.getItem("plaene")) || [];
+        liste.push(daten);
+        localStorage.setItem("plaene", JSON.stringify(liste));
+
+        anzeigen();
+    }
+
+    function anzeigen() {
+        const tabelle = document.getElementById("tabelle");
+        tabelle.innerHTML = "";
+        const liste = JSON.parse(localStorage.getItem("plaene")) || [];
+
+        liste.forEach(eintrag => {
+            const zeile = `
+                <tr>
+                    <td>${eintrag.name}</td>
+                    <td>${eintrag.monat}</td>
+                    <td>${eintrag.hifz}</td>
+                    <td>${eintrag.muraja}</td>
+                </tr>
+            `;
+            tabelle.innerHTML += zeile;
+        });
+    }
+
+    anzeigen();
+</script>
+
+</body>
+</html>
