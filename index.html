@@ -16,14 +16,8 @@ h1 {
     color: #1b5e20;
 }
 
-.islam {
-    text-align: center;
-    font-size: 30px;
-    margin-bottom: 10px;
-}
-
 .container {
-    max-width: 800px;
+    max-width: 700px;
     margin: auto;
     background: white;
     padding: 20px;
@@ -32,8 +26,8 @@ h1 {
 
 label {
     font-weight: bold;
-    margin-top: 10px;
     display: block;
+    margin-top: 10px;
 }
 
 input, textarea, select, button {
@@ -48,17 +42,6 @@ button {
     border: none;
     margin-top: 15px;
     cursor: pointer;
-}
-
-button:hover {
-    background: #2e7d32;
-}
-
-.alarm-box {
-    background: #e8f5e9;
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 10px;
 }
 
 table {
@@ -81,45 +64,40 @@ th {
 
 <body>
 
-<div class="islam">☪️ 📖 🕌</div>
-<h1>Qur'an Lernplan</h1>
+<h1>📖 Qur'an Lernplan ☪️</h1>
 
 <div class="container">
 
 <label>Name</label>
-<input id="name" placeholder="Dein Name">
+<input id="name">
 
 <label>Monat</label>
 <select id="monat">
-<option>Januar</option><option>Februar</option><option>März</option>
-<option>April</option><option>Mai</option><option>Juni</option>
-<option>Juli</option><option>August</option><option>September</option>
-<option>Oktober</option><option>November</option><option>Dezember</option>
+<option>Januar</option>
+<option>Februar</option>
+<option>März</option>
+<option>April</option>
+<option>Mai</option>
+<option>Juni</option>
+<option>Juli</option>
+<option>August</option>
+<option>September</option>
+<option>Oktober</option>
+<option>November</option>
+<option>Dezember</option>
 </select>
 
-<label>Hifz (Neues Auswendiglernen)</label>
-<textarea id="hifz"></textarea>
-
-<label>Murājaʿa (Wiederholung)</label>
-<textarea id="muraja"></textarea>
+<label>Lernplan</label>
+<textarea id="plan" placeholder="z.B. täglich 1 Seite"></textarea>
 
 <button onclick="speichern()">Speichern</button>
-
-<!-- Alarm -->
-<div class="alarm-box">
-<h3>⏰ Lern-Erinnerung</h3>
-<label>Uhrzeit</label>
-<input type="time" id="alarmZeit">
-<button onclick="alarmStart()">Alarm aktivieren</button>
-</div>
 
 <table>
 <thead>
 <tr>
 <th>Name</th>
 <th>Monat</th>
-<th>Hifz</th>
-<th>Murājaʿa</th>
+<th>Lernplan</th>
 </tr>
 </thead>
 <tbody id="tabelle"></tbody>
@@ -127,84 +105,28 @@ th {
 
 </div>
 
-<audio id="alarmTon">
-  <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
-</audio>
-
 <script>
-let alarmAktiv = false;
-
 function speichern() {
-    const name = document.getElementById("name").value.trim();
+    const name = document.getElementById("name").value;
     const monat = document.getElementById("monat").value;
-    const hifz = document.getElementById("hifz").value.trim();
-    const muraja = document.getElementById("muraja").value.trim();
+    const plan = document.getElementById("plan").value;
 
-    if (!name || !hifz || !muraja) {
-        alert("Bitte alle Felder ausfüllen");
+    if (name === "" || plan === "") {
+        alert("Bitte alles ausfüllen");
         return;
     }
 
-    const daten = { name, monat, hifz, muraja };
-    let liste = JSON.parse(localStorage.getItem("lernplan")) || [];
-    liste.push(daten);
-    localStorage.setItem("lernplan", JSON.stringify(liste));
+    const zeile = document.createElement("tr");
+    zeile.innerHTML = `
+        <td>${name}</td>
+        <td>${monat}</td>
+        <td>${plan}</td>
+    `;
 
-    anzeigen();
+    document.getElementById("tabelle").appendChild(zeile);
 
     document.getElementById("name").value = "";
-    document.getElementById("hifz").value = "";
-    document.getElementById("muraja").value = "";
-}
-
-function anzeigen() {
-    const tbody = document.getElementById("tabelle");
-    tbody.innerHTML = "";
-
-    let liste = JSON.parse(localStorage.getItem("lernplan")) || [];
-
-    liste.forEach(e => {
-        const zeile = document.createElement("tr");
-        zeile.innerHTML = `
-            <td>${e.name}</td>
-            <td>${e.monat}</td>
-            <td>${e.hifz}</td>
-            <td>${e.muraja}</td>
-        `;
-        tbody.appendChild(zeile);
-    });
-}
-
-anzeigen();
-
-function alarmStart() {
-    if (alarmAktiv) {
-        alert("Alarm ist bereits aktiv");
-        return;
-    }
-
-    const zeit = document.getElementById("alarmZeit").value;
-    if (!zeit) {
-        alert("Bitte Uhrzeit auswählen");
-        return;
-    }
-
-    alarmAktiv = true;
-    const [h, m] = zeit.split(":");
-
-    alert("⏰ Alarm aktiviert");
-
-    setInterval(() => {
-        const jetzt = new Date();
-        if (
-            jetzt.getHours() == h &&
-            jetzt.getMinutes() == m &&
-            jetzt.getSeconds() == 0
-        ) {
-            document.getElementById("alarmTon").play();
-            alert("📖 Zeit für Qur'an Lernen ☪️");
-        }
-    }, 1000);
+    document.getElementById("plan").value = "";
 }
 </script>
 
