@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Qur'an Lernplan</title>
-
 <style>
 body {
     font-family: Arial, sans-serif;
-    background: #f4f4f4;
+    background: #f2f6f4;
     padding: 20px;
 }
 
@@ -18,14 +17,14 @@ h1 {
 
 .islam {
     text-align: center;
-    font-size: 28px;
-    margin-bottom: 10px;
+    font-size: 30px;
+    margin-bottom: 15px;
 }
 
 .container {
     max-width: 800px;
-    background: white;
     margin: auto;
+    background: white;
     padding: 20px;
     border-radius: 10px;
 }
@@ -65,10 +64,10 @@ button:hover {
     text-align: center;
     font-size: 50px;
     color: black;
+    margin-bottom: 5px;
 }
 </style>
 </head>
-
 <body>
 
 <div class="islam">☪︎ 📖 🕌</div>
@@ -84,4 +83,89 @@ button:hover {
 
 <label>Monat</label>
 <select id="monat">
-<option>Januar</option><option>Fe
+<option>Januar</option><option>Februar</option><option>März</option>
+<option>April</option><option>Mai</option><option>Juni</option>
+<option>Juli</option><option>August</option><option>September</option>
+<option>Oktober</option><option>November</option><option>Dezember</option>
+</select>
+
+<label>Hifz (Neues Auswendiglernen)</label>
+<textarea id="hifz"></textarea>
+
+<label>Murājaʿa (Wiederholung)</label>
+<textarea id="muraja"></textarea>
+
+<button onclick="speichern()">Speichern</button>
+
+<!-- ALARM -->
+<div class="alarm-box">
+<h3>⏰ Lern-Alarm</h3>
+<label>Uhrzeit wählen</label>
+<input type="time" id="alarmZeit">
+<button onclick="alarmStart()">Alarm aktivieren</button>
+</div>
+
+<table border="1" style="width:100%; margin-top:20px;">
+<thead>
+<tr>
+<th>Name</th><th>Monat</th><th>Hifz</th><th>Murājaʿa</th>
+</tr>
+</thead>
+<tbody id="tabelle"></tbody>
+</table>
+
+<audio id="alarmTon" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"></audio>
+
+<script>
+function speichern() {
+    const daten = {
+        name: name.value,
+        monat: monat.value,
+        hifz: hifz.value,
+        muraja: muraja.value
+    };
+    let liste = JSON.parse(localStorage.getItem("plan")) || [];
+    liste.push(daten);
+    localStorage.setItem("plan", JSON.stringify(liste));
+    anzeigen();
+}
+
+function anzeigen() {
+    tabelle.innerHTML = "";
+    let liste = JSON.parse(localStorage.getItem("plan")) || [];
+    liste.forEach(e => {
+        tabelle.innerHTML += `
+        <tr>
+            <td>${e.name}</td>
+            <td>${e.monat}</td>
+            <td>${e.hifz}</td>
+            <td>${e.muraja}</td>
+        </tr>`;
+    });
+}
+
+anzeigen();
+
+/* Täglicher Alarm */
+function alarmStart() {
+    const zeit = document.getElementById("alarmZeit").value;
+    if (!zeit) {
+        alert("Bitte Uhrzeit auswählen");
+        return;
+    }
+    const [h, m] = zeit.split(":");
+    alert("Alarm aktiviert ✅");
+
+    setInterval(() => {
+        const jetzt = new Date();
+        if (jetzt.getHours() == h && jetzt.getMinutes() == m && jetzt.getSeconds() == 0) {
+            const alarm = document.getElementById("alarmTon");
+            alarm.play();
+            alert("⏰ Lern weiter, Löwe! 📖☪️");
+        }
+    }, 1000);
+}
+</script>
+
+</body>
+</html>
